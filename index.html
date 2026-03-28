@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Letter</title>
+
+<style>
+  body {
+    background: #f6f1f1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-family: 'Georgia', serif;
+  }
+
+  .letter {
+    background: #fffdf8;
+    width: 500px;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  .letter:hover {
+    transform: scale(1.01);
+  }
+
+  .text {
+    font-size: 18px;
+    line-height: 1.6;
+    color: #333;
+    min-height: 120px;
+  }
+
+  .signature {
+    margin-top: 20px;
+    text-align: right;
+    font-style: italic;
+    opacity: 0;
+    transition: opacity 0.5s;
+  }
+
+  .show-signature {
+    opacity: 1;
+  }
+</style>
+</head>
+
+<body>
+
+<div class="letter" onclick="nextLine()">
+  <div id="text" class="text">
+    Click to read...
+  </div>
+
+  <div id="signature" class="signature">
+    - Emerson
+  </div>
+</div>
+
+<script>
+  const lines = [
+    "I have something to tell you, just to clear up my mind. I might sound selfish right now, but I guess that's just how it is.",
+    "Look, I really haven’t moved on from what happened between us. Nothing really happened, but it mattered to me—and that's what hurts the most.",
+    "For a long time, I wanted it to be you. After spending so much time avoiding things, I thought I had finally gotten over you.",
+    "That’s where I was wrong.",
+    "I kept brushing it off, concealing it like a stain on a white shirt, and I was wrong—I like you more than I should.",
+    "You asked me something that lingered in my mind.",
+    "\"Bakit ang ingay mo sa chat?\"",
+    "I'll be honest—I wouldn’t say I never thought about that, but when you asked it",
+    "that’s when it clicked.",
+    "I spent months of avoiding every possible contact with you. I know it sounds harsh, but that's the only way I could think at that time.",
+    "Avoiding you became a chore.",
+    "When we started talking again, I felt light",
+    "free from the burden of trying to avoid you.",
+    "This will serve as a closure—if not for you, then for myself.",
+    "What we had felt unfinished. I didn't send this message because I want it to continue.",
+    "I still care",
+    "I do",
+    "and I don't think I can love the same way after this."
+  ];
+
+  let index = 0;
+
+  function nextLine() {
+    const text = document.getElementById("text");
+    const signature = document.getElementById("signature");
+
+    if (index < lines.length) {
+      text.innerText = lines[index];
+      index++;
+    } else {
+      text.innerText = "";
+      signature.classList.add("show-signature");
+    }
+  }
+</script>
+
+</body>
+</html>
