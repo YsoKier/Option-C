@@ -15,18 +15,31 @@
     overflow: hidden;
   }
 
-  
-  .hidden-message {
+  /* Hidden Spotify button */
+  .spotify-container {
     position: absolute;
-    font-size: 22px;
-    color: #444;
     opacity: 0;
     transition: opacity 1.2s ease;
-    text-align: center;
   }
 
-  .show-message {
+  .show-spotify {
     opacity: 1;
+  }
+
+  .spotify-button {
+    background: #1DB954;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-size: 16px;
+    transition: 0.3s;
+    display: inline-block;
+  }
+
+  .spotify-button:hover {
+    transform: scale(1.05);
+    background: #17a74a;
   }
 
   .letter {
@@ -76,12 +89,17 @@
 
 <body>
 
-
-<div id="hiddenMessage" class="hidden-message">
-  Hawakan mo lagi ang beat.
+<!-- Spotify Button -->
+<div id="spotifyContainer" class="spotify-container">
+  <a 
+    href="https://open.spotify.com/track/6BGNjTZ8zp9MlsIydBa7A9?si=f23178aeb3c74dce" 
+    target="_blank" 
+    class="spotify-button">
+    🎧 Listen on Spotify
+  </a>
 </div>
 
-
+<!-- Letter -->
 <div id="letter" class="letter" onclick="nextLine()">
   <div id="text" class="text">
     Click to read...
@@ -120,7 +138,7 @@
     const text = document.getElementById("text");
     const signature = document.getElementById("signature");
     const letter = document.getElementById("letter");
-    const hiddenMessage = document.getElementById("hiddenMessage");
+    const spotify = document.getElementById("spotifyContainer");
 
     text.classList.add("fade-out");
 
@@ -135,9 +153,9 @@
         text.classList.remove("fade-out");
         index++;
       } else {
-        
+        // Final click → letter disappears + Spotify button appears
         letter.classList.add("disappear");
-        hiddenMessage.classList.add("show-message");
+        spotify.classList.add("show-spotify");
       }
     }, 500);
   }
