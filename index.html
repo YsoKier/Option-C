@@ -21,11 +21,7 @@
     border-radius: 12px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.1);
     cursor: pointer;
-    transition: 0.3s;
-  }
-
-  .letter:hover {
-    transform: scale(1.01);
+    transition: opacity 0.8s ease, transform 0.5s;
   }
 
   .text {
@@ -33,6 +29,17 @@
     line-height: 1.6;
     color: #333;
     min-height: 120px;
+
+    
+    text-align: center;
+
+    
+    opacity: 1;
+    transition: opacity 0.6s ease;
+  }
+
+  .fade-out {
+    opacity: 0;
   }
 
   .signature {
@@ -40,18 +47,24 @@
     text-align: right;
     font-style: italic;
     opacity: 0;
-    transition: opacity 0.5s;
+    transition: opacity 0.8s;
   }
 
   .show-signature {
     opacity: 1;
+  }
+
+  .disappear {
+    opacity: 0;
+    transform: scale(0.95);
+    pointer-events: none;
   }
 </style>
 </head>
 
 <body>
 
-<div class="letter" onclick="nextLine()">
+<div id="letter" class="letter" onclick="nextLine()">
   <div id="text" class="text">
     Click to read...
   </div>
@@ -88,14 +101,24 @@
   function nextLine() {
     const text = document.getElementById("text");
     const signature = document.getElementById("signature");
+    const letter = document.getElementById("letter");
 
-    if (index < lines.length) {
-      text.innerText = lines[index];
-      index++;
-    } else {
-      text.innerText = "";
-      signature.classList.add("show-signature");
-    }
+    text.classList.add("fade-out");
+
+    setTimeout(() => {
+      if (index < lines.length) {
+        text.innerText = lines[index];
+        text.classList.remove("fade-out");
+        index++;
+      } else if (index === lines.length) {
+        text.innerText = "";
+        signature.classList.add("show-signature");
+        text.classList.remove("fade-out");
+        index++;
+      } else {
+        letter.classList.add("disappear");
+      }
+    }, 500);
   }
 </script>
 
