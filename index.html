@@ -5,217 +5,234 @@
 <title>Letter</title>
 
 <style>
-  body {
-    margin: 0;
-    height: 100vh;
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-family: 'Georgia', serif;
-    background: linear-gradient(135deg, #f3e9e2, #d6d3e0, #c9d6df);
-  }
-  
-  .envelope {
-    width: 420px;
-    height: 260px;
-    background: #e6d8cc;
-    border-radius: 10px;
-    position: relative;
-    cursor: pointer;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.15);
-  }
+body {
+  margin: 0;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Georgia', serif;
+  background: linear-gradient(135deg, #f3e9e2, #dcd6f7, #c9d6df);
+}
 
-  .flap {
-    position: absolute;
-    width: 100%;
-    height: 130px;
-    background: #d8c8bc;
-    clip-path: polygon(0 0, 50% 100%, 100% 0);
-    transform-origin: top;
-    transition: transform 0.8s ease;
-  }
+/* ENVELOPE */
+.envelope {
+  width: 440px;
+  height: 270px;
+  background: #e8d9cc;
+  border-radius: 12px;
+  position: absolute;
+  cursor: pointer;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.18);
+  transition: opacity 0.6s ease;
+}
 
-  .open .flap {
-    transform: rotateX(180deg);
-  }
-  
-  .letter {
-    position: absolute;
-    width: 360px;
-    background: rgba(255,253,248,0.95);
-    padding: 30px;
-    border-radius: 14px;
-    top: 60px;
-    left: 50%;
-    transform: translateX(-50%) translateY(40px);
-    opacity: 0;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.12);
-    transition: all 1s ease;
-  }
-  
-  .rise {
-    transform: translateX(-50%) translateY(-180px);
-    opacity: 1;
-  }
-  
-  .fall {
-    transform: translateX(-50%) translateY(0);
-    opacity: 1;
-  }
-  
-  .reading {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 520px;
-    padding: 50px 40px;
-    border-radius: 18px;
-    cursor: pointer;
-  }
+.flap {
+  position: absolute;
+  width: 100%;
+  height: 140px;
+  background: #d9c7b9;
+  clip-path: polygon(0 0, 50% 100%, 100% 0);
+  transform-origin: top;
+  transition: transform 0.8s ease;
+}
 
-  .text {
-    min-height: 140px;
-    line-height: 1.8;
-    text-align: center;
-    transition: opacity 0.6s ease;
-  }
+/* subtle inner paper */
+.inner-shadow {
+  position: absolute;
+  width: 90%;
+  height: 80%;
+  background: rgba(0,0,0,0.05);
+  top: 10%;
+  left: 5%;
+  border-radius: 8px;
+}
 
-  .fade-out {
-    opacity: 0;
-  }
+/* LETTER (separate now!) */
+.letter {
+  position: absolute;
+  width: 380px;
+  background: rgba(255,253,248,0.97);
+  padding: 35px;
+  border-radius: 16px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+  opacity: 0;
+  transform: translateY(80px);
+  transition: all 1s ease;
+}
 
-  .signature {
-    margin-top: 20px;
-    text-align: right;
-    font-family: 'Brush Script MT', cursive;
-    font-size: 22px;
-    opacity: 0;
-    transition: opacity 1.5s;
-  }
+/* animation states */
+.rise {
+  opacity: 1;
+  transform: translateY(-200px);
+}
 
-  .show-signature {
-    opacity: 1;
-  }
+.fall {
+  transform: translateY(0);
+}
 
-  .disappear {
-    opacity: 0;
-    transform: translate(-50%, -30%) scale(0.95);
-  }
+/* reading mode */
+.reading {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 520px;
+  padding: 50px 40px;
+  border-radius: 18px;
+  cursor: pointer;
+}
 
+/* TEXT */
+.text {
+  min-height: 140px;
+  line-height: 1.8;
+  text-align: center;
+  transition: opacity 0.6s ease;
+}
+
+.fade-out {
+  opacity: 0;
+}
+
+/* SIGNATURE */
+.signature {
+  margin-top: 20px;
+  text-align: right;
+  font-family: 'Brush Script MT', cursive;
+  font-size: 22px;
+  opacity: 0;
+  transition: opacity 1.5s;
+}
+
+.show-signature {
+  opacity: 1;
+}
+
+/* ending fade */
+.disappear {
+  opacity: 0;
+  transform: translate(-50%, -40%) scale(0.95);
+}
 </style>
 </head>
 
 <body>
 
+<!-- Envelope -->
 <div id="envelope" class="envelope" onclick="openEnvelope()">
   <div class="flap"></div>
+  <div class="inner-shadow"></div>
+</div>
 
-  <div id="letter" class="letter">
-    <div id="text">Click to begin...</div>
-    <div id="signature" class="signature">- Emerson</div>
-  </div>
+<!-- Letter (OUTSIDE envelope now) -->
+<div id="letter" class="letter">
+  <div id="text">Click to begin...</div>
+  <div id="signature" class="signature">- Emerson</div>
 </div>
 
 <script>
-  let stage = 0;
+let stage = 0;
 
-  function openEnvelope() {
-    if (stage !== 0) return;
+function openEnvelope() {
+  if (stage !== 0) return;
 
-    const envelope = document.getElementById("envelope");
-    const letter = document.getElementById("letter");
+  const envelope = document.getElementById("envelope");
+  const letter = document.getElementById("letter");
+  const flap = document.querySelector(".flap");
 
-    envelope.classList.add("open");
+  flap.style.transform = "rotateX(180deg)";
 
-    setTimeout(() => {
-      letter.classList.add("rise");
-    }, 400);
+  // letter rises out
+  setTimeout(() => {
+    letter.classList.add("rise");
+  }, 400);
 
-    setTimeout(() => {
-      letter.classList.remove("rise");
-      letter.classList.add("fall");
-    }, 1600);
+  // slight pause then drop
+  setTimeout(() => {
+    letter.classList.remove("rise");
+    letter.classList.add("fall");
+  }, 1700);
 
-    setTimeout(() => {
-      envelope.style.opacity = "0";
-      setTimeout(() => envelope.style.display = "none", 500);
-      letter.classList.add("reading");
-    }, 2600);
+  // envelope fades, letter stays
+  setTimeout(() => {
+    envelope.style.opacity = "0";
+    setTimeout(() => envelope.style.display = "none", 600);
+    letter.classList.add("reading");
+  }, 2600);
 
-    stage = 1;
-  }
+  stage = 1;
+}
 
-  const lines = [
-    "I have something to tell you, just to clear up my mind. I might sound selfish right now, but I guess that's just how it is.",
-    "Look, I really haven’t moved on from what happened between us. Nothing really happened, but it mattered to me—and that's what hurts the most.",
-    "For a long time, I wanted it to be you. After spending so much time avoiding things, I thought I had finally gotten over you.",
-    "That’s where I was wrong.",
-    "I kept brushing it off, concealing it like a stain on a white shirt, and I was wrong—I like you more than I should.",
-    "You asked me something that lingered in my mind.",
-    "\"Bakit ang ingay mo sa chat?\"",
-    "I'll be honest—I wouldn’t say I never thought about that, but when you asked it",
-    "that’s when it clicked.",
-    "I spent months of avoiding every possible contact with you.",
-    "Avoiding you became a chore.",
-    "When we started talking again, I felt light",
-    "free from the burden of trying to avoid you.",
-    "This will serve as a closure—if not for you, then for myself.",
-    "What we had felt unfinished.",
-    "I still care",
-    "I do",
-    "and I don't think I can love the same way after this."
-  ];
+/* LETTER CONTENT */
+const lines = [
+"I have something to tell you, just to clear up my mind. I might sound selfish right now, but I guess that's just how it is.",
+"Look, I really haven’t moved on from what happened between us. Nothing really happened, but it mattered to me—and that's what hurts the most.",
+"For a long time, I wanted it to be you.",
+"That’s where I was wrong.",
+"I kept brushing it off, concealing it like a stain on a white shirt.",
+"You asked me something that lingered in my mind.",
+"\"Bakit ang ingay mo sa chat?\"",
+"that’s when it clicked.",
+"I spent months of avoiding every possible contact with you.",
+"Avoiding you became a chore.",
+"When we started talking again, I felt light",
+"free from the burden of trying to avoid you.",
+"This will serve as a closure—if not for you, then for myself.",
+"What we had felt unfinished.",
+"I still care",
+"I do",
+"and I don't think I can love the same way after this."
+];
 
-  let index = 0;
-  let typing = false;
+let index = 0;
+let typing = false;
 
-  function typeWriter(text, element, speed = 28) {
-    let i = 0;
-    element.innerHTML = "";
-    typing = true;
+function typeWriter(text, element, speed = 28) {
+  let i = 0;
+  element.innerHTML = "";
+  typing = true;
 
-    function type() {
-      if (i < text.length) {
-        element.innerHTML += text.charAt(i);
-        i++;
-        setTimeout(type, speed);
-      } else {
-        typing = false;
-      }
+  function type() {
+    if (i < text.length) {
+      element.innerHTML += text.charAt(i);
+      i++;
+      setTimeout(type, speed);
+    } else {
+      typing = false;
     }
-
-    type();
   }
+  type();
+}
 
-  function nextLine() {
-    if (typing) return;
+function nextLine() {
+  if (typing) return;
 
-    const text = document.getElementById("text");
-    const signature = document.getElementById("signature");
-    const letter = document.getElementById("letter");
+  const text = document.getElementById("text");
+  const signature = document.getElementById("signature");
+  const letter = document.getElementById("letter");
 
-    text.classList.add("fade-out");
+  text.classList.add("fade-out");
 
-    setTimeout(() => {
-      if (index < lines.length) {
-        text.classList.remove("fade-out");
-        typeWriter(lines[index], text);
-        index++;
-      } else if (index === lines.length) {
-        text.innerHTML = "";
-        signature.classList.add("show-signature");
-        index++;
-      } else {
-        letter.classList.add("disappear");
-      }
-    }, 500);
-  }
+  setTimeout(() => {
+    if (index < lines.length) {
+      text.classList.remove("fade-out");
+      typeWriter(lines[index], text);
+      index++;
+    } else if (index === lines.length) {
+      text.innerHTML = "";
+      signature.classList.add("show-signature");
+      index++;
+    } else {
+      letter.classList.add("disappear");
+    }
+  }, 500);
+}
 
-  document.addEventListener("click", () => {
-    if (stage === 1) nextLine();
-  });
+document.addEventListener("click", () => {
+  if (stage === 1) nextLine();
+});
 </script>
 
 </body>
