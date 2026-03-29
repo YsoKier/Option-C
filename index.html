@@ -16,50 +16,73 @@
     background: linear-gradient(135deg, #f3e9e2, #d6d3e0, #c9d6df);
   }
   
-  .particle {
+  .envelope {
+    width: 300px;
+    height: 200px;
+    background: #e8dcd2;
+    position: relative;
+    cursor: pointer;
+    border-radius: 6px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    transition: transform 0.5s;
+  }
+  
+  .flap {
     position: absolute;
-    width: 6px;
-    height: 6px;
-    background: rgba(255,255,255,0.5);
-    border-radius: 50%;
-    animation: float 12s linear infinite;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100px;
+    background: #d8c8bc;
+    clip-path: polygon(0 0, 50% 100%, 100% 0);
+    transform-origin: top;
+    transition: transform 0.8s ease;
   }
 
-  @keyframes float {
-    from {
-      transform: translateY(100vh) scale(0.5);
-      opacity: 0;
-    }
-    50% {
-      opacity: 0.6;
-    }
-    to {
-      transform: translateY(-10vh) scale(1);
-      opacity: 0;
-    }
+  .open .flap {
+    transform: rotateX(180deg);
   }
   
   .letter {
-    background: rgba(255, 253, 248, 0.85);
-    backdrop-filter: blur(6px);
+    position: absolute;
+    top: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 260px;
+    background: rgba(255,253,248,0.95);
+    padding: 25px;
+    border-radius: 10px;
+    text-align: center;
+    opacity: 0;
+    transition: all 1s ease;
+  }
+  
+  .rise {
+    transform: translate(-50%, -180px);
+    opacity: 1;
+  }
+  
+  .fall {
+    transform: translate(-50%, 120px);
+    opacity: 1;
+  }
+  
+  .reading {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1);
     width: 520px;
     padding: 50px 40px;
     border-radius: 18px;
     box-shadow: 0 25px 60px rgba(0,0,0,0.15);
     cursor: pointer;
-    transition: opacity 1.5s ease, transform 1s ease;
-    position: relative;
   }
 
   .text {
-    font-size: 18px;
-    line-height: 1.8;
-    text-align: center;
-    color: #2f2f2f;
     min-height: 140px;
-    letter-spacing: 0.3px;
-    opacity: 1;
-    transition: opacity 0.8s ease;
+    line-height: 1.8;
+    transition: opacity 0.6s;
   }
 
   .fade-out {
@@ -67,22 +90,21 @@
   }
 
   .signature {
-    margin-top: 30px;
+    margin-top: 20px;
     text-align: right;
     font-family: 'Brush Script MT', cursive;
-    font-size: 24px;
+    font-size: 22px;
     opacity: 0;
-    transition: opacity 2s ease;
+    transition: opacity 1.5s;
   }
 
   .show-signature {
     opacity: 1;
   }
-  
+
   .disappear {
     opacity: 0;
-    transform: translateY(20px) scale(0.98);
-    pointer-events: none;
+    transform: translate(-50%, -30%) scale(0.95);
   }
 
 </style>
@@ -90,28 +112,43 @@
 
 <body>
 
-<script>
-  for (let i = 0; i < 25; i++) {
-    const p = document.createElement("div");
-    p.className = "particle";
-    p.style.left = Math.random() * 100 + "vw";
-    p.style.animationDuration = (8 + Math.random() * 6) + "s";
-    p.style.opacity = Math.random();
-    document.body.appendChild(p);
-  }
-</script>
+<div id="envelope" class="envelope" onclick="openEnvelope()">
+  <div class="flap"></div>
 
-<div id="letter" class="letter" onclick="nextLine()">
-  <div id="text" class="text">
-    Click to begin...
-  </div>
-
-  <div id="signature" class="signature">
-    - Emerson
+  <div id="letter" class="letter">
+    <div id="text">Click to begin...</div>
+    <div id="signature" class="signature">- Emerson</div>
   </div>
 </div>
 
 <script>
+  let stage = 0;
+
+  function openEnvelope() {
+    const envelope = document.getElementById("envelope");
+    const letter = document.getElementById("letter");
+
+    if (stage === 0) {
+      envelope.classList.add("open");
+
+      setTimeout(() => {
+        letter.classList.add("rise");
+      }, 500);
+
+      setTimeout(() => {
+        letter.classList.remove("rise");
+        letter.classList.add("fall");
+      }, 1800);
+
+      setTimeout(() => {
+        envelope.style.display = "none";
+        letter.classList.add("reading");
+      }, 3000);
+
+      stage = 1;
+    }
+  }
+
   const lines = [
     "I have something to tell you, just to clear up my mind. I might sound selfish right now, but I guess that's just how it is.",
     "Look, I really haven’t moved on from what happened between us. Nothing really happened, but it mattered to me—and that's what hurts the most.",
@@ -122,41 +159,20 @@
     "\"Bakit ang ingay mo sa chat?\"",
     "I'll be honest—I wouldn’t say I never thought about that, but when you asked it",
     "that’s when it clicked.",
-    "I spent months of avoiding every possible contact with you. I know it sounds harsh, but that's the only way I could think at that time.",
+    "I spent months of avoiding every possible contact with you.",
     "Avoiding you became a chore.",
     "When we started talking again, I felt light",
     "free from the burden of trying to avoid you.",
     "This will serve as a closure—if not for you, then for myself.",
-    "What we had felt unfinished. I didn't send this message because I want it to continue.",
+    "What we had felt unfinished.",
     "I still care",
     "I do",
     "and I don't think I can love the same way after this."
   ];
 
   let index = 0;
-  let typing = false;
-
-  function typeWriter(text, element, speed = 28) {
-    let i = 0;
-    element.innerHTML = "";
-    typing = true;
-
-    function type() {
-      if (i < text.length) {
-        element.innerHTML += text.charAt(i);
-        i++;
-        setTimeout(type, speed);
-      } else {
-        typing = false;
-      }
-    }
-
-    type();
-  }
 
   function nextLine() {
-    if (typing) return;
-
     const text = document.getElementById("text");
     const signature = document.getElementById("signature");
     const letter = document.getElementById("letter");
@@ -165,18 +181,22 @@
 
     setTimeout(() => {
       if (index < lines.length) {
+        text.innerText = lines[index];
         text.classList.remove("fade-out");
-        typeWriter(lines[index], text);
         index++;
       } else if (index === lines.length) {
-        text.innerHTML = "";
+        text.innerText = "";
         signature.classList.add("show-signature");
         index++;
       } else {
         letter.classList.add("disappear");
       }
-    }, 600);
+    }, 500);
   }
+
+  document.addEventListener("click", () => {
+    if (stage === 1) nextLine();
+  });
 </script>
 
 </body>
